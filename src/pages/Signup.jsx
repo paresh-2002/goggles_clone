@@ -139,7 +139,7 @@ const Signup = () => {
                   className="btn-primary w-2/3 text-lg text-center"
                   disabled={isDisabled}
                 >
-                  Signing up...
+                  Create Account
                   {/*{signingUp ? "Signing up..." : "Create Account"}*/}
                 </button>
                 <p className="text-gray-600 text-sm">

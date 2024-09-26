@@ -23,14 +23,7 @@ const Banner = ({ catRef }) => {
           >
             Start Shopping
           </button>
-          <button
-            className="p-3 flex items-center"
-            onClick={() =>
-              catRef.current.scrollIntoView({
-                behavior: "smooth",
-              })
-            }
-          >
+          <button className="p-3 flex items-center">
             <span className="mx-2 text-sm md:text-base">Explore More</span>{" "}
             <BsArrowDownRightCircle className="text-lg" />
           </button>
