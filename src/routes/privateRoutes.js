@@ -5,7 +5,7 @@ const privateRoutes = [
     element: <Cart />,
   },
   {
-    path: "/wishlist",
+    path: "wishlist",
     element: <Wishlist />,
   },
   {

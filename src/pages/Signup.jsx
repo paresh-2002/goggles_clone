@@ -1,9 +1,11 @@
 import React, { useState } from "react";
 import { AiFillEye, AiFillEyeInvisible } from "react-icons/ai";
-import { useNavigate } from "react-router";
-import { Link } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { Logo } from "../components";
 import bannerHero from "../assets/bannerHero.jpg";
+import authService from "../firebase/auth";
+import { useDispatch } from "react-redux";
+import { authUserActions } from "../store/authSlice";
 
 const Signup = () => {
   const navigate = useNavigate();
@@ -12,40 +14,65 @@ const Signup = () => {
     email: "",
     password: "",
   });
+  const [error, setError] = useState("");
+  const [signingUp, setSigningUp] = useState(false);
+  const dispatch = useDispatch();
   const [showPassword, setShowPassword] = useState({
     password: false,
     confirmPassword: false,
   });
   const [confirmPassword, setConfirmPassword] = useState("");
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log(userDetails);
+    setError("");
+    
+    if (userDetails.password !== confirmPassword) {
+      setError("Passwords do not match.");
+      return;
+    }
 
-    //signupHandler(userDetails);
+    setSigningUp(true);
+    try {
+      const userData = await authService.createAccount({
+        email: userDetails.email,
+        password: userDetails.password,
+        username: userDetails.username,
+      });
+
+      if (userData) {
+        const currentUserData = await authService.getCurrentUser();
+        if (currentUserData) {
+          dispatch(authUserActions.login(currentUserData));
+          navigate("/");
+        }
+      }
+    } catch (error) {
+      setError(error.message);
+    } finally {
+      setSigningUp(false);
+    }
   };
+
   const isDisabled =
-    //signingUp ||
+    signingUp ||
     !userDetails.username ||
     !userDetails.email ||
     !userDetails.password ||
     !confirmPassword;
+
   return (
-    <main className="grid  grid-rows-1 md:grid-cols-2 w-full  h-screen m-auto ">
-      <section className=" hidden md:block max-h-screen  rounded-lg">
-        <img src={bannerHero} alt="" className="w-full h-full object-cover" />
+    <main className="grid grid-rows-1 md:grid-cols-2 w-full h-screen m-auto">
+      <section className="hidden md:block max-h-screen rounded-lg">
+        <img src={bannerHero} alt="Banner" className="w-full h-full object-cover" />
       </section>
       <div className="flex items-center justify-center w-full px-5">
         <section className="px-10 py-10 rounded-md shadow-md bg-white/[0.7] flex flex-col gap-6 w-full max-w-lg">
           <Logo />
-          <div className="flex flex-col gap-2 ">
+          <div className="flex flex-col gap-2">
             <h1 className="text-4xl font-bold mb-3">Sign up</h1>
-
-            <form
-              action=""
-              className="flex flex-col gap-4 py-5"
-              onSubmit={handleSubmit}
-            >
+            {error && <p className="text-red-600">{error}</p>}
+            <form className="flex flex-col gap-4 py-5" onSubmit={handleSubmit}>
               <label className="flex flex-col">
                 <input
                   type="text"
@@ -90,11 +117,7 @@ const Signup = () => {
                     })
                   }
                 >
-                  {showPassword.password ? (
-                    <AiFillEye />
-                  ) : (
-                    <AiFillEyeInvisible />
-                  )}
+                  {showPassword.password ? <AiFillEye /> : <AiFillEyeInvisible />}
                 </span>
               </label>
               <label className="flex flex-col relative">
@@ -115,11 +138,7 @@ const Signup = () => {
                     })
                   }
                 >
-                  {showPassword.confirmPassword ? (
-                    <AiFillEye />
-                  ) : (
-                    <AiFillEyeInvisible />
-                  )}
+                  {showPassword.confirmPassword ? <AiFillEye /> : <AiFillEyeInvisible />}
                 </span>
                 <p
                   className={`pt-1 ${
@@ -133,22 +152,17 @@ const Signup = () => {
                   Password Mismatch
                 </p>
               </label>
-              <div className="w-full py-2   flex flex-col gap-4 items-center">
+              <div className="w-full py-2 flex flex-col gap-4 items-center">
                 <button
                   type="submit"
                   className="btn-primary w-2/3 text-lg text-center"
                   disabled={isDisabled}
                 >
-                  Create Account
-                  {/*{signingUp ? "Signing up..." : "Create Account"}*/}
+                  {signingUp ? "Signing up..." : "Create Account"}
                 </button>
                 <p className="text-gray-600 text-sm">
                   Already have an account?{" "}
-                  <Link
-                    to="/login"
-                    className="underline text-base
-            "
-                  >
+                  <Link to="/login" className="underline text-base">
                     Login
                   </Link>
                 </p>
