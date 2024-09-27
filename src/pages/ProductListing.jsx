@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import bannerImg from "../assets/bannerHero.jpg";
 import loadingGif from "../assets/loading.gif";
-import { Filters, SingleProduct } from "../components";
+import {  SingleProduct } from "../components";
 import { useLocation } from "react-router";
 import { BiFilter } from "react-icons/bi";
 import { MdKeyboardArrowUp } from "react-icons/md";
@@ -13,7 +13,6 @@ const ProductListing = () => {
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [showScrollArrow, setShowScrollArrow] = useState(false);
   const [productsList, setProductsList] = useState(products);
-  console.log(productsList);
 
   useEffect(() => {
     if (location?.state?.from === "category") {

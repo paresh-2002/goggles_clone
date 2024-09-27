@@ -5,6 +5,7 @@ import "./custom.styles.css";
 import { ToastContainer } from "react-toastify";
 
 const App = () => {
+  
   return (
     <>
       <ToastContainer hideProgressBar theme="dark" autoClose={2000} />
