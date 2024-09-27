@@ -3,6 +3,9 @@ import { useLocation, useNavigate } from "react-router";
 import bannerHero from "../assets/bannerHero.jpg";
 import { Link } from "react-router-dom";
 import { Logo } from "../components";
+import { useDispatch } from "react-redux";
+import authService from "../firebase/auth";
+import { authUserActions } from "../store/authSlice";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -11,11 +14,27 @@ const Login = () => {
     email: "",
     password: "",
   });
+  const [loggingIn, setLoggingIn] = useState(false);
+  const dispatch = useDispatch();
+  const [error, setError] = useState("");
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log(loginCredentials);
-    //loginHandler(loginCredentials);
+      setError("");
+      setLoggingIn(true);
+      try {
+        const session = await authService.login({email:loginCredentials.email, password:loginCredentials.password});
+        if (session) {
+          const userData = await authService.getCurrentUser({uid:session.uid});
+          if (userData) dispatch(authUserActions.login(userData));
+          navigate("/");
+        }
+      } catch (error) {
+        setError(error.message);
+      }
+      finally {
+        setLoggingIn(false);
+      }
   };
   return (
     <main className="grid  grid-rows-1 lg:grid-cols-2 w-full  h-screen m-auto">
@@ -28,6 +47,7 @@ const Login = () => {
           <div className="flex flex-col gap-2">
             <h1 className="text-3xl font-bold mb-3 ">Login to your account</h1>
           </div>
+          {error && <p className="text-red-600">{error}</p>}
           <form
             action=""
             className="flex flex-col gap-3"
@@ -65,20 +85,19 @@ const Login = () => {
               <button
                 className="btn-primary w-2/3 text-lg text-center "
                 disabled={
-                  //loggingIn ||
+                  loggingIn ||
                   !loginCredentials.email || !loginCredentials.password
                 }
               >
-                Login
-                {/*{loggingIn ? "Logging In..." : "Login"}*/}
+                {loggingIn ? "Logging In..." : "Login"}
               </button>
               <button
                 className="btn-secondary w-2/3 text-sm md:text-base text-center"
                 onClick={() => {
                   setLoginCredentials({
                     ...loginCredentials,
-                    email: "kookie@bangtan.com",
-                    password: "bangtan0707",
+                    email: "admin@bangtan.com",
+                    password: "admin0707",
                   });
                 }}
               >

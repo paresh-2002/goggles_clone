@@ -1,7 +1,10 @@
 import React from "react";
 import { BsBookmarkHeart, BsFillBookmarkHeartFill } from "react-icons/bs";
+import { GiRoundStar } from "react-icons/gi";
+import { useNavigate } from "react-router";
 
-const SingleProduct = () => {
+const SingleProduct = ({product}) => {
+  const navigate = useNavigate();
   return (
     <div
       className="flex flex-col xs:flex-row sm:flex-col  bg-white/[0.5] rounded-lg shadow-md border-2 border-black/[0.05] overflow-hidden
@@ -48,7 +51,7 @@ const SingleProduct = () => {
         <div className="w-full pt-2 border-t flex justify-between items-center">
           <button
             className={`border border-[--primary-text-color]  py-1.5 text-sm  rounded-full px-6 hover:bg-[--primary-text-color] hover:text-white transition hover:shadow-md disabled:cursor-not-allowed`}
-            disabled={disableCart}
+            // disabled={disableCart}
             //onClick={() => {
             //  if (!token) {
             //    navigate("/login", { state: { from: location.pathname } });
@@ -66,7 +69,7 @@ const SingleProduct = () => {
             {/*{inCart ? "Go to Bag" : "Add to Bag"}*/}
           </button>
           <button
-            disabled={disableWish}
+            // disabled={disableWish}
             className="disabled:cursor-not-allowed"
             //onClick={() => {
             //  if (!token) {
